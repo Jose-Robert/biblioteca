@@ -1,0 +1,26 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1/biblioteca
+
+spring:
+  datasource:
+    username: sa
+    url: jdbc:h2:mem:testdb
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
+        show_sql: false
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+url:
+  viacep: https://viacep.com.br/ws/
