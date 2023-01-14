@@ -28,15 +28,15 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.cadastrar(requestTO));
     }
 
-    @PutMapping(value = "/{id}/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{cpf}/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ClienteResponseTO> atualizar(@RequestBody ClienteRequestTO requestTO,
-                                                       @PathVariable(name = "id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(clienteService.atualizar(requestTO, id));
+                                                       @PathVariable(name = "cpf") String cpf) {
+        return ResponseEntity.status(HttpStatus.OK).body(clienteService.atualizar(requestTO, cpf));
     }
 
-    @GetMapping(value = "/{id}/find")
-    public ResponseEntity<ClienteResponseTO> consultar(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(clienteService.consultar(id));
+    @GetMapping(value = "/{cpf}/find")
+    public ResponseEntity<ClienteResponseTO> consultar(@PathVariable(name = "cpf") String cpf) {
+        return ResponseEntity.status(HttpStatus.OK).body(clienteService.consultar(cpf));
     }
 
     @GetMapping(value = "/find-all")
@@ -48,9 +48,9 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(clienteService.listar(specification, page, size));
     }
 
-    @DeleteMapping(value = "/{id}/delete")
-    public void excluir(@PathVariable(name = "id") Long id) {
-        clienteService.excluir(id);
+    @DeleteMapping(value = "/{cpf}/delete")
+    public void excluir(@PathVariable(name = "cpf") String cpf) {
+        clienteService.excluir(cpf);
     }
 
 }

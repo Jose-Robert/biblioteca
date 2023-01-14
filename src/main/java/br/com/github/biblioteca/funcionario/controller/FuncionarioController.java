@@ -6,6 +6,7 @@ import br.com.github.biblioteca.funcionario.model.entity.Funcionario;
 import br.com.github.biblioteca.funcionario.model.filter.FuncionarioFilterTO;
 import br.com.github.biblioteca.funcionario.service.FuncionarioService;
 import br.com.github.biblioteca.infrastructure.persistence.SpecificationFactory;
+import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -28,15 +29,15 @@ public class FuncionarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(funcionarioService.cadastrar(requestTO));
     }
 
-    @PutMapping(value = "/{id}/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{cpf}/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FuncionarioResponseTO> atualizar(@RequestBody FuncionarioRequestTO requestTO,
-                                                       @PathVariable(name = "id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(funcionarioService.atualizar(requestTO, id));
+                                                       @PathVariable(name = "cpf") String cpf) {
+        return ResponseEntity.status(HttpStatus.OK).body(funcionarioService.atualizar(requestTO, cpf));
     }
 
-    @GetMapping(value = "/{id}/find")
-    public ResponseEntity<FuncionarioResponseTO> consultar(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(funcionarioService.consultar(id));
+    @GetMapping(value = "/{cpf}/find")
+    public ResponseEntity<FuncionarioResponseTO> consultar(@PathVariable(name = "cpf") String cpf) {
+        return ResponseEntity.status(HttpStatus.OK).body(funcionarioService.consultar(cpf));
     }
 
     @GetMapping(value = "/find-all")
@@ -48,13 +49,13 @@ public class FuncionarioController {
         return ResponseEntity.status(HttpStatus.OK).body(funcionarioService.listar(specification, page, size));
     }
 
-    @DeleteMapping(value = "/{id}/delete")
-    public void demitir(@PathVariable(name = "id") Long id) {
-        funcionarioService.demitir(id);
+    @DeleteMapping(value = "/{cpf}/delete")
+    public void demitir(@PathVariable(name = "cpf") String cpf) {
+        funcionarioService.demitir(cpf);
     }
 
     @GetMapping(value = "/find/occurrences-employees/{cep}")
-    public ResponseEntity<List<FuncionarioResponseTO>> consultarOcorrenciasFuncionariosPorCep(@PathVariable(name = "cep") String cep) {
+    public ResponseEntity<EnderecoResponseTO> consultarOcorrenciasFuncionariosPorCep(@PathVariable(name = "cep") String cep) {
         return ResponseEntity.status(HttpStatus.OK).body(funcionarioService.consultarOcorrenciasFuncionarioPorCep(cep));
     }
 }

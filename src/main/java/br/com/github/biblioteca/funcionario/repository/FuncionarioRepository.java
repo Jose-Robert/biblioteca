@@ -8,11 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {
+public interface FuncionarioRepository extends JpaRepository<Funcionario, UUID> {
 
-    List<Funcionario> findByEnderecoBairroAndEnderecoLocalidade(String bairro, String localidade);
+    List<Funcionario> findByEnderecoCep(String cep);
 
     Page<Funcionario> findAll(Specification<Funcionario> specification, Pageable pageable);
+
+    Optional<Funcionario> findByCpf(String cpf);
 }

@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional(rollbackOn = RuntimeException.class)
     public ClienteResponseTO cadastrar(ClienteRequestTO requestTO) {
         EnderecoResponseTO enderecoResponseTO = viaCepService.obterEnderecoViaCep(requestTO.getEndereco().getCep());
 
@@ -50,34 +52,35 @@ public class ClienteServiceImpl implements ClienteService {
                 .complemento(requestTO.getEndereco().getComplemento())
                 .uf(enderecoResponseTO.getUf())
                 .build());
-        return conversion.convertToDTO(clienteRepository.saveAndFlush(cliente));
+        return conversion.convertToDTO(clienteRepository.save(cliente));
     }
 
     @Override
-    public ClienteResponseTO atualizar(ClienteRequestTO requestTO, Long id) {
-        Cliente cliente = this.getCliente(id);
+    public ClienteResponseTO atualizar(ClienteRequestTO requestTO, String cpf) {
+        Cliente cliente = this.getClienteByCpf(cpf);
         BeanUtils.copyProperties(requestTO, cliente, "id");
         return conversion.convertToDTO(clienteRepository.saveAndFlush(cliente));
     }
 
     @Override
-    public ClienteResponseTO consultar(Long id) {
-        return conversion.convertToDTO(this.getCliente(id));
+    public ClienteResponseTO consultar(String cpf) {
+        return conversion.convertToDTO(this.getClienteByCpf(cpf));
     }
 
     @Override
-    public void excluir(Long id) {
-        clienteRepository.deleteById(id);
+    public void excluir(String cpf) {
+        Cliente cliente = this.getClienteByCpf(cpf);
+        clienteRepository.deleteById(cliente.getId());
     }
 
     @Override
     public List<ClienteResponseTO> listar(Specification<Cliente> specification, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "nome"));
         Page<Cliente> clientes = clienteRepository.findAll(specification, pageable);
         return clientes.stream().map(conversion::convertToDTO).collect(Collectors.toList());
     }
 
-    private Cliente getCliente(Long id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found"));
+    private Cliente getClienteByCpf(String cpf) {
+        return clienteRepository.findByCpf(cpf).orElseThrow(() -> new RuntimeException("Not Found"));
     }
 }

@@ -57,20 +57,21 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     }
 
     @Override
-    public FuncionarioResponseTO atualizar(FuncionarioRequestTO requestTO, Long id) {
-        Funcionario funcionario = this.getFuncionario(id);
+    public FuncionarioResponseTO atualizar(FuncionarioRequestTO requestTO, String cpf) {
+        Funcionario funcionario = this.getFuncionarioByCpf(cpf);
         BeanUtils.copyProperties(requestTO, funcionario, "id");
         return conversion.convertToDTO(funcionarioRepository.saveAndFlush(funcionario));
     }
 
     @Override
-    public FuncionarioResponseTO consultar(Long id) {
-        return conversion.convertToDTO(this.getFuncionario(id));
+    public FuncionarioResponseTO consultar(String cpf) {
+        return conversion.convertToDTO(this.getFuncionarioByCpf(cpf));
     }
 
     @Override
-    public void demitir(Long id) {
-        funcionarioRepository.deleteById(id);
+    public void demitir(String cpf) {
+        Funcionario funcionario = getFuncionarioByCpf(cpf);
+        funcionarioRepository.deleteById(funcionario.getId());
     }
 
     @Override
@@ -81,15 +82,17 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     }
 
     @Override
-    public List<FuncionarioResponseTO> consultarOcorrenciasFuncionarioPorCep(String cep) {
-        EnderecoResponseTO enderecoResponseTO = this.getEndereco(cep);
-        List<Funcionario> funcionarios = funcionarioRepository.findByEnderecoBairroAndEnderecoLocalidade(
-                enderecoResponseTO.getBairro(), enderecoResponseTO.getLocalidade());
-        return funcionarios.stream().map(conversion::convertToDTO).collect(Collectors.toList());
+    public EnderecoResponseTO consultarOcorrenciasFuncionarioPorCep(String cep) {
+        List<Funcionario> funcionarios = funcionarioRepository.findByEnderecoCep(cep);
+        Funcionario funcionario = funcionarios.stream()
+                .filter(func -> func.getEndereco().getCep() != null)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Not Found."));
+       return this.getEndereco(funcionario.getEndereco().getCep());
     }
 
-    private Funcionario getFuncionario(Long id) {
-        return funcionarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Not Found"));
+    private Funcionario getFuncionarioByCpf(String cpf) {
+        return funcionarioRepository.findByCpf(cpf).orElseThrow(() -> new RuntimeException("Not Found."));
     }
 
     private EnderecoResponseTO getEndereco(String cep) {

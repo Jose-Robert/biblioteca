@@ -10,8 +10,8 @@ import java.util.List;
 public interface ClienteService {
 
     ClienteResponseTO cadastrar(ClienteRequestTO requestTO);
-    ClienteResponseTO atualizar(ClienteRequestTO requestTO, Long id);
-    ClienteResponseTO consultar(Long id);
-    void excluir(Long id);
+    ClienteResponseTO atualizar(ClienteRequestTO requestTO, String cpf);
+    ClienteResponseTO consultar(String cpf);
+    void excluir(String cpf);
     List<ClienteResponseTO> listar(Specification<Cliente> specification, int page, int size);
 }

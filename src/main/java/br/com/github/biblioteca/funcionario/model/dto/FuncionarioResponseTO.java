@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Builder
 public class FuncionarioResponseTO implements Serializable {
 
-    private Long id;
     private String nome;
     private String cpf;
     private String telefone;

@@ -3,6 +3,7 @@ package br.com.github.biblioteca.funcionario.service;
 import br.com.github.biblioteca.funcionario.model.dto.FuncionarioRequestTO;
 import br.com.github.biblioteca.funcionario.model.dto.FuncionarioResponseTO;
 import br.com.github.biblioteca.funcionario.model.entity.Funcionario;
+import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -10,10 +11,9 @@ import java.util.List;
 public interface FuncionarioService {
 
     FuncionarioResponseTO cadastrar(FuncionarioRequestTO requestTO);
-    FuncionarioResponseTO atualizar(FuncionarioRequestTO requestTO, Long id);
-    FuncionarioResponseTO consultar(Long id);
-    void demitir(Long id);
+    FuncionarioResponseTO atualizar(FuncionarioRequestTO requestTO, String cpf);
+    FuncionarioResponseTO consultar(String cpf);
+    void demitir(String cpf);
     List<FuncionarioResponseTO> listar(Specification<Funcionario> specification, int page, int size);
-
-    List<FuncionarioResponseTO> consultarOcorrenciasFuncionarioPorCep(String cep);
+    EnderecoResponseTO consultarOcorrenciasFuncionarioPorCep(String cep);
 }

@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Builder
 public class ClienteResponseTO implements Serializable {
 
-    private Long id;
     private String nome;
     private String cpf;
     private String telefone;
