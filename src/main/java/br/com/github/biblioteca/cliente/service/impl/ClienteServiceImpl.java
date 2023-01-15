@@ -5,10 +5,12 @@ import br.com.github.biblioteca.cliente.model.dto.ClienteResponseTO;
 import br.com.github.biblioteca.cliente.model.entity.Cliente;
 import br.com.github.biblioteca.cliente.repository.ClienteRepository;
 import br.com.github.biblioteca.cliente.service.ClienteService;
-import br.com.github.biblioteca.cliente.shared.ClienteConversion;
+import br.com.github.biblioteca.cliente.shared.adpter.ClienteValidateAdapter;
+import br.com.github.biblioteca.cliente.shared.conversor.ClienteConversion;
 import br.com.github.biblioteca.infrastructure.service.impl.ViaCepService;
 import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import br.com.github.biblioteca.shared.model.entity.Endereco;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,31 +23,30 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static br.com.github.biblioteca.shared.utils.StringUtils.*;
+
 @Service
+@RequiredArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final ClienteConversion conversion;
     private final ViaCepService viaCepService;
-
-    public ClienteServiceImpl(ClienteRepository clienteRepository, ClienteConversion conversion, ViaCepService viaCepService) {
-        this.clienteRepository = clienteRepository;
-        this.conversion = conversion;
-        this.viaCepService = viaCepService;
-    }
+    private final ClienteValidateAdapter validator;
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackOn = Exception.class)
     public ClienteResponseTO cadastrar(ClienteRequestTO requestTO) {
+        validator.validate(requestTO);
         EnderecoResponseTO enderecoResponseTO = viaCepService.obterEnderecoViaCep(requestTO.getEndereco().getCep());
 
         Cliente cliente = new Cliente();
         cliente.setNome(requestTO.getNome());
         cliente.setEmail(requestTO.getEmail());
-        cliente.setCpf(requestTO.getCpf());
-        cliente.setTelefone(requestTO.getTelefone());
+        cliente.setCpf(removeCaracteresEspeciaisCpf(requestTO.getCpf()));
+        cliente.setTelefone(removeCaracteresEspeciaisTelefone(requestTO.getTelefone()));
         cliente.setEndereco(Endereco.builder()
-                .cep(enderecoResponseTO.getCep())
+                .cep(removeCaracteresEspeciaisCep(enderecoResponseTO.getCep()))
                 .logradouro(enderecoResponseTO.getLogradouro())
                 .bairro(enderecoResponseTO.getBairro())
                 .localidade(enderecoResponseTO.getLocalidade())

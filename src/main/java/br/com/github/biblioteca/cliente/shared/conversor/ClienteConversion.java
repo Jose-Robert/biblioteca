@@ -1,4 +1,4 @@
-package br.com.github.biblioteca.cliente.shared;
+package br.com.github.biblioteca.cliente.shared.conversor;
 
 import br.com.github.biblioteca.cliente.model.dto.ClienteResponseTO;
 import br.com.github.biblioteca.cliente.model.entity.Cliente;
