@@ -1,9 +1,6 @@
 package br.com.github.biblioteca.infrastructure.handler;
 
-import br.com.github.biblioteca.infrastructure.exception.CampoObrigatorioException;
-import br.com.github.biblioteca.infrastructure.exception.CampoTamanhoMaximoException;
-import br.com.github.biblioteca.infrastructure.exception.CpfInvalidoException;
-import br.com.github.biblioteca.infrastructure.exception.EmailInvalidException;
+import br.com.github.biblioteca.infrastructure.exception.*;
 import br.com.github.biblioteca.infrastructure.service.impl.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
@@ -46,6 +43,12 @@ public class ValidacaoExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEmailInvalidException(EmailInvalidException exception, WebRequest request) {
         Object[] args = { exception.getMessage() };
         return handlerException(exception, HttpStatus.BAD_REQUEST, request, "validacao.email-invalido", args);
+    }
+
+    @ExceptionHandler({ RecursoNaoEncontradoException.class })
+    public ResponseEntity<Object> handleEmailInvalidException(RecursoNaoEncontradoException exception, WebRequest request) {
+        Object[] args = { exception.getMessage() };
+        return handlerException(exception, HttpStatus.NOT_FOUND, request, "validacao.recurso-nao-encontrado", args);
     }
 
     protected ResponseEntity<Object> handlerException(Exception exception, HttpStatus status, WebRequest request, String key, Object[] args) {

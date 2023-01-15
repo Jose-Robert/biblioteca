@@ -7,6 +7,7 @@ import br.com.github.biblioteca.cliente.repository.ClienteRepository;
 import br.com.github.biblioteca.cliente.service.ClienteService;
 import br.com.github.biblioteca.cliente.shared.adpter.ClienteValidateAdapter;
 import br.com.github.biblioteca.cliente.shared.conversor.ClienteConversion;
+import br.com.github.biblioteca.infrastructure.exception.RecursoNaoEncontradoException;
 import br.com.github.biblioteca.infrastructure.service.impl.ViaCepService;
 import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import br.com.github.biblioteca.shared.model.entity.Endereco;
@@ -82,6 +83,6 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     private Cliente getClienteByCpf(String cpf) {
-        return clienteRepository.findByCpf(cpf).orElseThrow(() -> new RuntimeException("Not Found"));
+        return clienteRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
     }
 }
