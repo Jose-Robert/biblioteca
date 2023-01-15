@@ -58,6 +58,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public ClienteResponseTO atualizar(ClienteRequestTO requestTO, String cpf) {
         Cliente cliente = this.getClienteByCpf(cpf);
         BeanUtils.copyProperties(requestTO, cliente, "id");
@@ -70,6 +71,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void excluir(String cpf) {
         Cliente cliente = this.getClienteByCpf(cpf);
         clienteRepository.deleteById(cliente.getId());
