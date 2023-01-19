@@ -34,7 +34,7 @@ public class ViaCepService {
             JSONObject object = new JSONObject(json);
             var erro = object.getBoolean("erro");
             if (erro) {
-                log.info("CEP Inválido!!!");
+                log.error("CEP Inválido!!!");
                 throw new CepInvalidoException();
             }
         }
