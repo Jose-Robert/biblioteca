@@ -40,20 +40,7 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseTO cadastrar(ClienteRequestTO requestTO) {
         validator.validate(requestTO);
         EnderecoResponseTO enderecoResponseTO = viaCepService.obterEnderecoViaCep(requestTO.getEndereco().getCep());
-
-        Cliente cliente = new Cliente();
-        cliente.setNome(requestTO.getNome());
-        cliente.setEmail(requestTO.getEmail());
-        cliente.setCpf(removeCaracteresEspeciaisCpf(requestTO.getCpf()));
-        cliente.setTelefone(removeCaracteresEspeciaisTelefone(requestTO.getTelefone()));
-        cliente.setEndereco(Endereco.builder()
-                .cep(removeCaracteresEspeciaisCep(enderecoResponseTO.getCep()))
-                .logradouro(enderecoResponseTO.getLogradouro())
-                .bairro(enderecoResponseTO.getBairro())
-                .localidade(enderecoResponseTO.getLocalidade())
-                .complemento(requestTO.getEndereco().getComplemento())
-                .uf(enderecoResponseTO.getUf())
-                .build());
+        Cliente cliente = this.clienteBuilder(requestTO, enderecoResponseTO);
         return conversion.convertToDTO(clienteRepository.save(cliente));
     }
 
@@ -87,4 +74,22 @@ public class ClienteServiceImpl implements ClienteService {
     private Cliente getClienteByCpf(String cpf) {
         return clienteRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
     }
+
+    private Cliente clienteBuilder(ClienteRequestTO requestTO, EnderecoResponseTO enderecoResponseTO) {
+        Cliente cliente = new Cliente();
+        cliente.setNome(requestTO.getNome());
+        cliente.setEmail(requestTO.getEmail());
+        cliente.setCpf(removeCaracteresEspeciaisCpf(requestTO.getCpf()));
+        cliente.setTelefone(removeCaracteresEspeciaisTelefone(requestTO.getTelefone()));
+        cliente.setEndereco(Endereco.builder()
+                .cep(removeCaracteresEspeciaisCep(enderecoResponseTO.getCep()))
+                .logradouro(enderecoResponseTO.getLogradouro())
+                .bairro(enderecoResponseTO.getBairro())
+                .localidade(enderecoResponseTO.getLocalidade())
+                .complemento(requestTO.getEndereco().getComplemento())
+                .uf(enderecoResponseTO.getUf())
+                .build());
+        return cliente;
+    }
+
 }
