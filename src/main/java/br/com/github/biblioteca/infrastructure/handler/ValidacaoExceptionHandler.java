@@ -46,9 +46,15 @@ public class ValidacaoExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({ RecursoNaoEncontradoException.class })
-    public ResponseEntity<Object> handleEmailInvalidException(RecursoNaoEncontradoException exception, WebRequest request) {
+    public ResponseEntity<Object> handleRecursoNaoEncontradoException(RecursoNaoEncontradoException exception, WebRequest request) {
         Object[] args = { exception.getMessage() };
         return handlerException(exception, HttpStatus.NOT_FOUND, request, "validacao.recurso-nao-encontrado", args);
+    }
+
+    @ExceptionHandler({ CepInvalidoException.class })
+    public ResponseEntity<Object> handleCepInvalidoException(CepInvalidoException exception, WebRequest request) {
+        Object[] args = { exception.getMessage() };
+        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "validacao.cep-invalido", args);
     }
 
     protected ResponseEntity<Object> handlerException(Exception exception, HttpStatus status, WebRequest request, String key, Object[] args) {

@@ -39,21 +39,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     public FuncionarioResponseTO cadastrar(FuncionarioRequestTO requestTO) {
         validateAdapter.validate(requestTO);
         EnderecoResponseTO enderecoResponseTO = this.getEndereco(requestTO.getEndereco().getCep());
-
-        Funcionario funcionario = new Funcionario();
-        funcionario.setCpf(removeCaracteresEspeciaisCpf(requestTO.getCpf()));
-        funcionario.setEmail(requestTO.getEmail());
-        funcionario.setNome(requestTO.getNome());
-        funcionario.setTelefone(removeCaracteresEspeciaisTelefone(requestTO.getTelefone()));
-        funcionario.setMatricula(geradorMatricula());
-        funcionario.setEndereco(Endereco.builder()
-                .cep(removeCaracteresEspeciaisCep(enderecoResponseTO.getCep()))
-                .logradouro(enderecoResponseTO.getLogradouro())
-                .bairro(enderecoResponseTO.getBairro())
-                .localidade(enderecoResponseTO.getLocalidade())
-                .complemento(requestTO.getEndereco().getComplemento())
-                .uf(enderecoResponseTO.getUf())
-                .build());
+        Funcionario funcionario = this.funcionarioBuilder(requestTO, enderecoResponseTO);
         return conversion.convertToDTO(funcionarioRepository.saveAndFlush(funcionario));
     }
 
@@ -98,6 +84,24 @@ public class FuncionarioServiceImpl implements FuncionarioService {
 
     private EnderecoResponseTO getEndereco(String cep) {
         return viaCepService.obterEnderecoViaCep(cep);
+    }
+
+    private Funcionario funcionarioBuilder(FuncionarioRequestTO requestTO, EnderecoResponseTO enderecoResponseTO) {
+        Funcionario funcionario = new Funcionario();
+        funcionario.setCpf(removeCaracteresEspeciaisCpf(requestTO.getCpf()));
+        funcionario.setEmail(requestTO.getEmail());
+        funcionario.setNome(requestTO.getNome());
+        funcionario.setTelefone(removeCaracteresEspeciaisTelefone(requestTO.getTelefone()));
+        funcionario.setMatricula(geradorMatricula());
+        funcionario.setEndereco(Endereco.builder()
+                .cep(removeCaracteresEspeciaisCep(enderecoResponseTO.getCep()))
+                .logradouro(enderecoResponseTO.getLogradouro())
+                .bairro(enderecoResponseTO.getBairro())
+                .localidade(enderecoResponseTO.getLocalidade())
+                .complemento(requestTO.getEndereco().getComplemento())
+                .uf(enderecoResponseTO.getUf())
+                .build());
+        return funcionario;
     }
 
 }
