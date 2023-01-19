@@ -1,8 +1,9 @@
-package br.com.github.biblioteca.cliente.shared.adpter;
+package br.com.github.biblioteca.cliente.shared.adapter;
 
 import br.com.github.biblioteca.cliente.model.dto.ClienteRequestTO;
 import br.com.github.biblioteca.cliente.repository.ClienteRepository;
-import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteCPFEmailException;
+import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteCPFException;
+import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteEmailException;
 import br.com.github.biblioteca.infrastructure.exception.CampoObrigatorioException;
 import br.com.github.biblioteca.infrastructure.exception.CampoTamanhoMaximoException;
 import br.com.github.biblioteca.infrastructure.exception.CpfInvalidoException;
@@ -46,9 +47,14 @@ public class ClienteValidateAdapter {
         var cpf = removeCaracteresEspeciaisCpf(requestTO.getCpf());
         var email = requestTO.getEmail();
 
-        boolean exists = clienteRepository.existsByCpfOrEmail(cpf, email);
-        if (exists) {
-            throw new ClienteJaExistenteCPFEmailException();
+        boolean existsByCpf = clienteRepository.existsByCpf(cpf);
+        if (existsByCpf) {
+            throw new ClienteJaExistenteCPFException();
+        }
+
+        boolean existsByEmail = clienteRepository.existsByEmail(email);
+        if (existsByEmail) {
+            throw new ClienteJaExistenteEmailException();
         }
     }
 

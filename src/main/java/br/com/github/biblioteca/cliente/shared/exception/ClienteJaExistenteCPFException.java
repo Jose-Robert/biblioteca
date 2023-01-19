@@ -1,8 +1,8 @@
 package br.com.github.biblioteca.cliente.shared.exception;
 
-public class ClienteJaExistenteCPFEmailException extends RuntimeException {
+public class ClienteJaExistenteCPFException extends RuntimeException {
 
-    public ClienteJaExistenteCPFEmailException() {
+    public ClienteJaExistenteCPFException() {
         super();
     }
 }

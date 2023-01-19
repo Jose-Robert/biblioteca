@@ -1,6 +1,7 @@
-package br.com.github.biblioteca.cliente.shared.handler;
+package br.com.github.biblioteca.funcionario.shared.handler;
 
-import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteCPFEmailException;
+import br.com.github.biblioteca.funcionario.shared.exception.FuncionarioJaExistenteCPFException;
+import br.com.github.biblioteca.funcionario.shared.exception.FuncionarioJaExistenteEmailException;
 import br.com.github.biblioteca.infrastructure.handler.ApiError;
 import br.com.github.biblioteca.infrastructure.service.impl.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,21 @@ import java.util.List;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class ClienteExceptionHandler extends ResponseEntityExceptionHandler {
+public class FuncionarioExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
     private MessageService messageService;
 
-    @ExceptionHandler({ ClienteJaExistenteCPFEmailException.class })
-    public ResponseEntity<Object> handleEmailInvalidException(ClienteJaExistenteCPFEmailException exception, WebRequest request) {
+    @ExceptionHandler({ FuncionarioJaExistenteCPFException.class })
+    public ResponseEntity<Object> handleFuncionarioJaExistenteCPFException(FuncionarioJaExistenteCPFException exception, WebRequest request) {
         Object[] args = { exception.getMessage() };
-        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "cliente.cpf-existente", args);
+        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "funcionario.cpf-existente", args);
+    }
+
+    @ExceptionHandler({ FuncionarioJaExistenteEmailException.class })
+    public ResponseEntity<Object> handleEmailInvalidException(FuncionarioJaExistenteEmailException exception, WebRequest request) {
+        Object[] args = { exception.getMessage() };
+        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "funcionario.email-existente", args);
     }
 
     protected ResponseEntity<Object> handlerException(Exception exception, HttpStatus status, WebRequest request, String key, Object[] args) {

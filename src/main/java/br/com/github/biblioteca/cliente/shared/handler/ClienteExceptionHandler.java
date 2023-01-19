@@ -1,6 +1,8 @@
-package br.com.github.biblioteca.infrastructure.handler;
+package br.com.github.biblioteca.cliente.shared.handler;
 
-import br.com.github.biblioteca.infrastructure.exception.*;
+import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteCPFException;
+import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteEmailException;
+import br.com.github.biblioteca.infrastructure.handler.ApiError;
 import br.com.github.biblioteca.infrastructure.service.impl.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
@@ -17,38 +19,21 @@ import java.util.List;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class ValidacaoExceptionHandler extends ResponseEntityExceptionHandler {
+public class ClienteExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
     private MessageService messageService;
 
-    @ExceptionHandler({ CampoObrigatorioException.class })
-    public ResponseEntity<Object> handleEsteCampoObrigatorioException(CampoObrigatorioException exception, WebRequest request) {
+    @ExceptionHandler({ ClienteJaExistenteCPFException.class })
+    public ResponseEntity<Object> handleClienteJaExistenteCPFException(ClienteJaExistenteCPFException exception, WebRequest request) {
         Object[] args = { exception.getMessage() };
-        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "validacao.campo-obrigatorio", args);
+        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "cliente.cpf-existente", args);
     }
 
-    @ExceptionHandler({ CampoTamanhoMaximoException.class })
-    public ResponseEntity<Object> handleCampoTamanhoMaximoException(CampoTamanhoMaximoException exception, WebRequest request) {
-        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "validacao.campo-tamanho-maximo", exception.getArgs());
-    }
-
-    @ExceptionHandler({ CpfInvalidoException.class })
-    public ResponseEntity<Object> handleCpfInvalidoException(CpfInvalidoException exception, WebRequest request) {
+    @ExceptionHandler({ ClienteJaExistenteEmailException.class })
+    public ResponseEntity<Object> handleClienteJaExistenteEmailException(ClienteJaExistenteEmailException exception, WebRequest request) {
         Object[] args = { exception.getMessage() };
-        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "validacao.cpf-invalido", args);
-    }
-
-    @ExceptionHandler({ EmailInvalidException.class })
-    public ResponseEntity<Object> handleEmailInvalidException(EmailInvalidException exception, WebRequest request) {
-        Object[] args = { exception.getMessage() };
-        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "validacao.email-invalido", args);
-    }
-
-    @ExceptionHandler({ RecursoNaoEncontradoException.class })
-    public ResponseEntity<Object> handleEmailInvalidException(RecursoNaoEncontradoException exception, WebRequest request) {
-        Object[] args = { exception.getMessage() };
-        return handlerException(exception, HttpStatus.NOT_FOUND, request, "validacao.recurso-nao-encontrado", args);
+        return handlerException(exception, HttpStatus.BAD_REQUEST, request, "cliente.email-existente", args);
     }
 
     protected ResponseEntity<Object> handlerException(Exception exception, HttpStatus status, WebRequest request, String key, Object[] args) {

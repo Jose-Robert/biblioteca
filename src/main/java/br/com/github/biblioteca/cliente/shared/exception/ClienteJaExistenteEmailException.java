@@ -1,8 +1,8 @@
-package br.com.github.biblioteca.funcionario.shared.exception;
+package br.com.github.biblioteca.cliente.shared.exception;
 
-public class FuncionarioJaExistenteEmailException extends RuntimeException {
+public class ClienteJaExistenteEmailException extends RuntimeException {
 
-    public FuncionarioJaExistenteEmailException() {
+    public ClienteJaExistenteEmailException() {
         super();
     }
 }

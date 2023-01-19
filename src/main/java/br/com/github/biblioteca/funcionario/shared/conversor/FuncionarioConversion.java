@@ -1,4 +1,4 @@
-package br.com.github.biblioteca.funcionario.shared;
+package br.com.github.biblioteca.funcionario.shared.conversor;
 
 import br.com.github.biblioteca.funcionario.model.dto.FuncionarioResponseTO;
 import br.com.github.biblioteca.funcionario.model.entity.Funcionario;

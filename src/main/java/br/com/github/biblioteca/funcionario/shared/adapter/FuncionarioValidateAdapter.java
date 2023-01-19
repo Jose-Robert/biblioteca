@@ -1,8 +1,9 @@
-package br.com.github.biblioteca.cliente.shared.adapter;
+package br.com.github.biblioteca.funcionario.shared.adapter;
 
-import br.com.github.biblioteca.cliente.model.dto.ClienteRequestTO;
-import br.com.github.biblioteca.cliente.repository.ClienteRepository;
-import br.com.github.biblioteca.cliente.shared.exception.ClienteJaExistenteCPFEmailException;
+import br.com.github.biblioteca.funcionario.model.dto.FuncionarioRequestTO;
+import br.com.github.biblioteca.funcionario.repository.FuncionarioRepository;
+import br.com.github.biblioteca.funcionario.shared.exception.FuncionarioJaExistenteCPFException;
+import br.com.github.biblioteca.funcionario.shared.exception.FuncionarioJaExistenteEmailException;
 import br.com.github.biblioteca.infrastructure.exception.CampoObrigatorioException;
 import br.com.github.biblioteca.infrastructure.exception.CampoTamanhoMaximoException;
 import br.com.github.biblioteca.infrastructure.exception.CpfInvalidoException;
@@ -17,19 +18,19 @@ import static br.com.github.biblioteca.shared.utils.ValidatorUtils.verificarEmai
 
 @Component
 @RequiredArgsConstructor
-public class ClienteValidateAdapter {
+public class FuncionarioValidateAdapter {
 
-    private final ClienteRepository clienteRepository;
+    private final FuncionarioRepository funcionarioRepository;
 
-    public void validate(ClienteRequestTO request) {
+    public void validate(FuncionarioRequestTO request) {
         this.verificar(request);
         this.validaObrigatoriedadeDosCampos(request);
         this.validaDuplicidade(request);
     }
 
-    private void verificar(ClienteRequestTO request) {
-        var cpf = removeCaracteresEspeciaisCpf(request.getCpf());
+    private void verificar(FuncionarioRequestTO request) {
         var email = request.getEmail();
+        var cpf = removeCaracteresEspeciaisCpf(request.getCpf());
 
         boolean isCpfValid = verificarCpf(cpf);
         if (!isCpfValid) {
@@ -42,22 +43,22 @@ public class ClienteValidateAdapter {
         }
     }
 
-    private void validaDuplicidade(ClienteRequestTO requestTO) {
+    private void validaDuplicidade(FuncionarioRequestTO requestTO) {
         var cpf = removeCaracteresEspeciaisCpf(requestTO.getCpf());
         var email = requestTO.getEmail();
 
-        boolean exists = clienteRepository.existsByCpfOrEmail(cpf, email);
-        if (exists) {
-            throw new ClienteJaExistenteCPFEmailException();
+        boolean existsByCpf = funcionarioRepository.existsByCpf(cpf);
+        if (existsByCpf) {
+            throw new FuncionarioJaExistenteCPFException();
+        }
+
+        boolean existsByEmail = funcionarioRepository.existsByEmail(email);
+        if (existsByEmail) {
+            throw new FuncionarioJaExistenteEmailException();
         }
     }
 
-    private void validaObrigatoriedadeDosCampos(ClienteRequestTO requestTO) {
-        var nome = requestTO.getNome();
-        if (StringUtils.isBlank(nome)) {
-            throw new CampoObrigatorioException("Nome");
-        }
-
+    private void validaObrigatoriedadeDosCampos(FuncionarioRequestTO requestTO) {
         var cpf = removeCaracteresEspeciaisCpf(requestTO.getCpf());
         if (StringUtils.isBlank(cpf)) {
             throw new CampoObrigatorioException("CPF");
@@ -67,6 +68,16 @@ public class ClienteValidateAdapter {
             throw new CampoTamanhoMaximoException("CPF", "11");
         }
 
+        var nome = requestTO.getNome();
+        if (StringUtils.isBlank(nome)) {
+            throw new CampoObrigatorioException("Nome");
+        }
+
+        var email = requestTO.getEmail();
+        if (StringUtils.isBlank(email)) {
+            throw new CampoObrigatorioException("Email");
+        }
+
         var telefone = removeCaracteresEspeciaisTelefone(requestTO.getTelefone());
         if (StringUtils.isBlank(telefone)) {
             throw new CampoObrigatorioException("Telefone");
@@ -74,11 +85,6 @@ public class ClienteValidateAdapter {
 
         if (telefone.length() != 11) {
             throw new CampoTamanhoMaximoException("Telefone", "11");
-        }
-
-        var email = requestTO.getEmail();
-        if (StringUtils.isBlank(email)) {
-            throw new CampoObrigatorioException("Email");
         }
 
         var cep = removeCaracteresEspeciaisCep(requestTO.getEndereco().getCep());

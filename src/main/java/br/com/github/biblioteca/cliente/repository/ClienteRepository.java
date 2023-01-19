@@ -15,6 +15,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
     Page<Cliente> findAll(Specification<Cliente> specification,Pageable pageable);
     Optional<Cliente> findByCpf(String cpf);
-
-    boolean existsByCpfOrEmail(String cpf, String email);
+    boolean existsByCpf(String cpf);
+    boolean existsByEmail(String email);
 }

@@ -5,10 +5,13 @@ import br.com.github.biblioteca.funcionario.model.dto.FuncionarioResponseTO;
 import br.com.github.biblioteca.funcionario.model.entity.Funcionario;
 import br.com.github.biblioteca.funcionario.repository.FuncionarioRepository;
 import br.com.github.biblioteca.funcionario.service.FuncionarioService;
-import br.com.github.biblioteca.funcionario.shared.FuncionarioConversion;
+import br.com.github.biblioteca.funcionario.shared.adapter.FuncionarioValidateAdapter;
+import br.com.github.biblioteca.funcionario.shared.conversor.FuncionarioConversion;
+import br.com.github.biblioteca.infrastructure.exception.RecursoNaoEncontradoException;
 import br.com.github.biblioteca.infrastructure.service.impl.ViaCepService;
 import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import br.com.github.biblioteca.shared.model.entity.Endereco;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,32 +24,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static br.com.github.biblioteca.shared.utils.GeradorAleatorioMatricula.geradorMatricula;
+import static br.com.github.biblioteca.shared.utils.StringUtils.*;
 
 @Service
+@RequiredArgsConstructor
 public class FuncionarioServiceImpl implements FuncionarioService {
 
     private final ViaCepService viaCepService;
     private final FuncionarioRepository funcionarioRepository;
     private final FuncionarioConversion conversion;
-
-    public FuncionarioServiceImpl(ViaCepService viaCepService, FuncionarioRepository funcionarioRepository, FuncionarioConversion conversion) {
-        this.viaCepService = viaCepService;
-        this.funcionarioRepository = funcionarioRepository;
-        this.conversion = conversion;
-    }
+    private final FuncionarioValidateAdapter validateAdapter;
 
     @Override
     public FuncionarioResponseTO cadastrar(FuncionarioRequestTO requestTO) {
+        validateAdapter.validate(requestTO);
         EnderecoResponseTO enderecoResponseTO = this.getEndereco(requestTO.getEndereco().getCep());
 
         Funcionario funcionario = new Funcionario();
-        funcionario.setCpf(requestTO.getCpf());
+        funcionario.setCpf(removeCaracteresEspeciaisCpf(requestTO.getCpf()));
         funcionario.setEmail(requestTO.getEmail());
         funcionario.setNome(requestTO.getNome());
-        funcionario.setTelefone(requestTO.getTelefone());
+        funcionario.setTelefone(removeCaracteresEspeciaisTelefone(requestTO.getTelefone()));
         funcionario.setMatricula(geradorMatricula());
         funcionario.setEndereco(Endereco.builder()
-                .cep(enderecoResponseTO.getCep())
+                .cep(removeCaracteresEspeciaisCep(enderecoResponseTO.getCep()))
                 .logradouro(enderecoResponseTO.getLogradouro())
                 .bairro(enderecoResponseTO.getBairro())
                 .localidade(enderecoResponseTO.getLocalidade())
@@ -92,7 +93,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     }
 
     private Funcionario getFuncionarioByCpf(String cpf) {
-        return funcionarioRepository.findByCpf(cpf).orElseThrow(() -> new RuntimeException("Not Found."));
+        return funcionarioRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
     }
 
     private EnderecoResponseTO getEndereco(String cep) {

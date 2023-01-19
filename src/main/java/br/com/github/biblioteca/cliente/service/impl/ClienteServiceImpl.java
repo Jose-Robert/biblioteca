@@ -5,7 +5,7 @@ import br.com.github.biblioteca.cliente.model.dto.ClienteResponseTO;
 import br.com.github.biblioteca.cliente.model.entity.Cliente;
 import br.com.github.biblioteca.cliente.repository.ClienteRepository;
 import br.com.github.biblioteca.cliente.service.ClienteService;
-import br.com.github.biblioteca.cliente.shared.adpter.ClienteValidateAdapter;
+import br.com.github.biblioteca.cliente.shared.adapter.ClienteValidateAdapter;
 import br.com.github.biblioteca.cliente.shared.conversor.ClienteConversion;
 import br.com.github.biblioteca.infrastructure.exception.RecursoNaoEncontradoException;
 import br.com.github.biblioteca.infrastructure.service.impl.ViaCepService;

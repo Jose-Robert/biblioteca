@@ -1,8 +1,8 @@
 package br.com.github.biblioteca.funcionario.shared.exception;
 
-public class FuncionarioJaExistenteCPFEmailException extends RuntimeException {
+public class FuncionarioJaExistenteCPFException extends RuntimeException {
 
-    public FuncionarioJaExistenteCPFEmailException() {
+    public FuncionarioJaExistenteCPFException() {
         super();
     }
 }
