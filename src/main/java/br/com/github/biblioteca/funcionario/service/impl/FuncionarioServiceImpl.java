@@ -74,16 +74,16 @@ public class FuncionarioServiceImpl implements FuncionarioService {
         Funcionario funcionario = funcionarios.stream()
                 .filter(func -> func.getEndereco().getCep() != null)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Not Found."));
+                .orElseThrow(RecursoNaoEncontradoException::new);
        return this.getEndereco(funcionario.getEndereco().getCep());
-    }
-
-    private Funcionario getFuncionarioByCpf(String cpf) {
-        return funcionarioRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
     }
 
     private EnderecoResponseTO getEndereco(String cep) {
         return viaCepService.obterEnderecoViaCep(cep);
+    }
+
+    private Funcionario getFuncionarioByCpf(String cpf) {
+        return funcionarioRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
     }
 
     private Funcionario funcionarioBuilder(FuncionarioRequestTO requestTO, EnderecoResponseTO enderecoResponseTO) {
