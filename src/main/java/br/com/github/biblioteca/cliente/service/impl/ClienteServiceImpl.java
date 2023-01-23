@@ -13,6 +13,7 @@ import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import br.com.github.biblioteca.shared.model.entity.Endereco;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteValidateAdapter validator;
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional
     public ClienteResponseTO cadastrar(ClienteRequestTO requestTO) {
         validator.validate(requestTO);
         EnderecoResponseTO enderecoResponseTO = viaCepService.obterEnderecoViaCep(requestTO.getEndereco().getCep());
@@ -45,7 +46,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional
     public ClienteResponseTO atualizar(ClienteRequestTO requestTO, String cpf) {
         Cliente cliente = this.getClienteByCpf(cpf);
         BeanUtils.copyProperties(requestTO, cliente, "id");
@@ -53,18 +54,20 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Cacheable(value = "getCliente", key = "#cpf")
     public ClienteResponseTO consultar(String cpf) {
         return conversion.convertToDTO(this.getClienteByCpf(cpf));
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional
     public void excluir(String cpf) {
         Cliente cliente = this.getClienteByCpf(cpf);
         clienteRepository.deleteById(cliente.getId());
     }
 
     @Override
+    @Cacheable(value = "getAllCliente")
     public List<ClienteResponseTO> listar(Specification<Cliente> specification, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "nome"));
         Page<Cliente> clientes = clienteRepository.findAll(specification, pageable);

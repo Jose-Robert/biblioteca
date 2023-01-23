@@ -13,6 +13,8 @@ import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import br.com.github.biblioteca.shared.model.entity.Endereco;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +53,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     }
 
     @Override
+    @Cacheable(value = "getFuncionario", key = "#cpf")
     public FuncionarioResponseTO consultar(String cpf) {
         return conversion.convertToDTO(this.getFuncionarioByCpf(cpf));
     }
@@ -62,13 +65,15 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     }
 
     @Override
+    @CacheEvict(value = "getAllFuncionario", allEntries = true)
     public List<FuncionarioResponseTO> listar(Specification<Funcionario> specification, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Funcionario> funcionarios = funcionarioRepository.findAll(specification, pageable);
         return funcionarios.stream().map(conversion::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
+    @Cacheable(value = "getEndereco", key = "#cep")
     public EnderecoResponseTO consultarOcorrenciasFuncionarioPorCep(String cep) {
         List<Funcionario> funcionarios = funcionarioRepository.findByEnderecoCep(cep);
         Funcionario funcionario = funcionarios.stream()

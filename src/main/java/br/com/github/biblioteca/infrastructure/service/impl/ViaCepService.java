@@ -6,6 +6,7 @@ import br.com.github.biblioteca.shared.model.dto.EnderecoResponseTO;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,7 @@ public class ViaCepService {
         this.gson = gson;
     }
 
+    @Cacheable(value = "getViaCep", key = "#cep")
     public EnderecoResponseTO obterEnderecoViaCep(String cep) {
         log.info("Realizando Consulta na API - VIACEP {}...", cep);
         var json = feignClient.getViaCep(cep);
