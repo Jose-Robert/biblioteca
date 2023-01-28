@@ -88,7 +88,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     }
 
     private Funcionario getFuncionarioByCpf(String cpf) {
-        return funcionarioRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
+        return funcionarioRepository.findByCpf(removeCaracteresEspeciaisCpf(cpf)).orElseThrow(RecursoNaoEncontradoException::new);
     }
 
     private Funcionario funcionarioBuilder(FuncionarioRequestTO requestTO, EnderecoResponseTO enderecoResponseTO) {

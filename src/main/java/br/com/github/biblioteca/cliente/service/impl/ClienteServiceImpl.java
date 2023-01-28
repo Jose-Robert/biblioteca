@@ -75,7 +75,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     private Cliente getClienteByCpf(String cpf) {
-        return clienteRepository.findByCpf(cpf).orElseThrow(RecursoNaoEncontradoException::new);
+        return clienteRepository.findByCpf(removeCaracteresEspeciaisCpf(cpf)).orElseThrow(RecursoNaoEncontradoException::new);
     }
 
     private Cliente clienteBuilder(ClienteRequestTO requestTO, EnderecoResponseTO enderecoResponseTO) {

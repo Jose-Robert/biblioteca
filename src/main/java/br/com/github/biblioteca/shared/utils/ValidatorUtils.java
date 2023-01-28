@@ -11,17 +11,10 @@ public class ValidatorUtils {
     public static boolean verificarCpf(String cpf) {
         CPFValidator cpfValidator = new CPFValidator();
         List<ValidationMessage> erros = cpfValidator.invalidMessagesFor(cpf);
-        if (!erros.isEmpty()) {
-            return false;
-        }
-        return true;
+        return erros.isEmpty();
     }
 
     public static boolean verificarEmail(String email) {
-        boolean valid = EmailValidator.getInstance().isValid(email);
-        if (!valid) {
-            return false;
-        }
-        return true;
+        return EmailValidator.getInstance().isValid(email);
     }
 }
